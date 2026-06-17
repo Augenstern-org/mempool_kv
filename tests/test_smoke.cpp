@@ -49,7 +49,7 @@ static void fp_write_test() {
     test_chars[2]  =  'n';
     test_chars[3]  =  'a';
     test_chars[30] =  'k';
-    test_chars[32] =  'o';
+    test_chars[31] =  'o';
     CHECK(test_chars[0] == 'N');
     CHECK(test_chars[30] == 'k');
 

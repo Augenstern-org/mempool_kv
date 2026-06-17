@@ -3,10 +3,7 @@
 //
 
 #include "mempool/fixed_pool.h"
-#include "mempool/fixed_pool.h"
-
 #include <cstdlib>
-#include <new>
 
 // helper
 inline size_t align_up(size_t size, size_t alignment) {
