@@ -5,7 +5,6 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-include_directories(include)
 
 # 默认使用调试友好的编译方式；在学习过程中依赖 Sanitizer 来发现问题。
 if(NOT CMAKE_BUILD_TYPE)

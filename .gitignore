@@ -1,6 +1,7 @@
 cmake-build*
 build
 .idea
+.agents
 
 CLAUDE.md
 .cchis
