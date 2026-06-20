@@ -38,19 +38,58 @@ static void hash_conflict() {
     CHECK(out == "日奈大王");
 }
 
-static void oom() {
-    mempool::HashKVStore ht(1,1);
+static void error_path() {
+    mempool::HashKVStore ht(1, 1);
     ht.put("neuroil", "evil");
+    bool catch_oom = false;
     try {
         ht.put("i/tv", "no");
-    } catch (std::runtime_error& e) {
-        std::cerr << e.what() << std::endl;
     }
+    catch (std::runtime_error& e) {
+        catch_oom = true;
+    }
+
+    bool catch_val = false;
+    try {
+        ht.put("neuroil",
+               "evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_evilSoCute_");
+    }
+    catch (std::length_error& e) {
+        catch_val = true;
+    }
+
+    bool catch_key = false;
+    try {
+        ht.del("neuroil");
+        ht.put(
+            "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+            "om");
+    }
+    catch (std::length_error& e) {
+        catch_key = true;
+    }
+
+    CHECK(catch_oom);
+    CHECK(catch_val);
+    CHECK(catch_key);
+}
+
+static void count() {
+    mempool::HashKVStore ht(5, 10);
+    ht.put("1","1");
+    CHECK(ht.size() == 1);
+    ht.put("2","2");
+    CHECK(ht.size() == 2);
+    ht.put("3","3");
+    CHECK(ht.size() == 3);
+    ht.put("4","4");
+    CHECK(ht.size() == 4);
 }
 
 int main() {
     RUN_TEST(basic_op);
     RUN_TEST(hash_conflict);
-    RUN_TEST(oom);
+    RUN_TEST(error_path);
+    RUN_TEST(count);
     return mptest::summary();
 }

@@ -26,9 +26,12 @@ namespace mempool {
         void put(std::string_view key, std::string_view val);
         bool del(std::string_view key);
 
+        std::size_t size() const;
+
     private:
         std::size_t bucket_index(std::string_view key) const;
 
+        std::size_t size_ = 0;
         std::size_t bucket_count_;
         Entry** entries_;
         FixedPool fixed_pool_;

@@ -37,6 +37,7 @@ bool mempool::HashKVStore::get(std::string_view key, std::string& out) const {
 }
 
 void mempool::HashKVStore::put(std::string_view key, std::string_view val) {
+    if (key.size() >= sizeof(Entry::key) || val.size() >= sizeof(Entry::val)) throw std::length_error("key or val is too long!");
     std::size_t index = bucket_index(key);
     Entry* curr = entries_[index];
     while (curr) {
@@ -60,6 +61,8 @@ void mempool::HashKVStore::put(std::string_view key, std::string_view val) {
 
         new_entry->next = entries_[index];
         entries_[index] = new_entry;
+
+        ++size_;
     }
 }
 
@@ -73,8 +76,14 @@ bool mempool::HashKVStore::del(std::string_view key) {
         curr = curr->next;
     }
     if (!curr) return false;
-    fixed_pool_.deallocate(curr);
     if (prev) prev->next = curr->next;
     else entries_[index] = curr->next;
+    curr->next = nullptr;
+    fixed_pool_.deallocate(curr);
+    --size_;
     return true;
+}
+
+std::size_t mempool::HashKVStore::size() const {
+    return size_;
 }

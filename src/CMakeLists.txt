@@ -7,4 +7,4 @@ add_library(mempool STATIC
 target_link_libraries(mempool PUBLIC mempool_flags)
 
 add_executable(main main.cpp)
-target_link_libraries(main PRIVATE mempool)
+target_link_libraries(main PRIVATE mempool mempool_flags)
