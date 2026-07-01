@@ -18,6 +18,28 @@ add_library(mempool_flags INTERFACE)
 target_include_directories(mempool_flags INTERFACE ${CMAKE_SOURCE_DIR}/include)
 target_compile_options(mempool_flags INTERFACE -Wall -Wextra -Wpedantic)
 
+# LTO
+# 必须在任何 add_subdirectory / add_executable 之前设置：
+# CMAKE_INTERPROCEDURAL_OPTIMIZATION 的值在目标创建时被读取并固化到目标属性上，
+# 之后再改动不会回填给已经创建的目标。若放在 add_subdirectory(bench) 之后，
+# bench 目标会漏掉 LTO，导致 allocate/deallocate 无法内联进基准循环。
+option(ENABLE_LTO "Enable Link Time Optimization" OFF)
+if(ENABLE_LTO)
+  include(CheckIPOSupported)
+  check_ipo_supported(RESULT ipo_supported OUTPUT ipo_error) # 接住检查结果，不支持时不硬报错
+  if(ipo_supported)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+  else()
+    message(WARNING "未启用 LTO：编译器不支持 IPO：${ipo_error}")
+  endif()
+endif()
+
+# 性能测试
+option(MEMPOOL_BENCH "Build benchmarks (requires -DMEMPOOL_ASAN=OFF)" OFF)
+if (MEMPOOL_BENCH)
+  add_subdirectory(bench)
+endif ()
+
 if(MEMPOOL_ASAN)
   target_compile_options(mempool_flags INTERFACE
     -fsanitize=address -fno-omit-frame-pointer -g)
